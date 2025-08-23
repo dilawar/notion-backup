@@ -1,21 +1,17 @@
 [project]
 name = "notion-backup"
 version = "0.1.0"
-description = "prettify notion html exports"
+description = "Add your description here"
 readme = "README.md"
+authors = [
+    { name = "Dilawar Singh", email = "dilawar.s.rajput@gmail.com" }
+]
 requires-python = ">=3.10"
-dependencies = [
-    "beautifulsoup4>=4.13.4",
-    "bs4>=0.0.2",
-    "idna>=3.10",
-    "requests>=2.32.5",
-    "soupsieve>=2.7",
-    "tqdm>=4.67.1",
-    "urllib3>=2.5.0",
-]
+dependencies = []
 
-[dependency-groups]
-dev = [
-    "pyflakes>=3.4.0",
-    "ruff>=0.12.10",
-]
+[project.scripts]
+notion-backup = "notion_backup:main"
+
+[build-system]
+requires = ["uv_build>=0.8.11,<0.9.0"]
+build-backend = "uv_build"
