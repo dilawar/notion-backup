@@ -25,7 +25,8 @@ cachepath = unzippath / ".cache"
 cachepath.mkdir(exist_ok=True)
 cached_img_links = []
 
-css_injectionpath = Path.cwd() / "notionbackup" / "injections" / "injection.css"
+css_injectionpath = Path(__file__).parent / "injections" / "injection.css"
+assert css_injectionpath.is_file()
 
 
 htmlpaths = list(unzippath.rglob("*.html"))
@@ -73,7 +74,8 @@ for htmlpath in htmlpaths:
         try:
             response = requests.get(url, stream=True)
             filename = Path(url).name
-            cache_img_path = cachepath / filename
+            # filename can be very long
+            cache_img_path = cachepath / filename[:128]
             with open(cache_img_path, "wb") as f:
                 for chunk in response.iter_content(chunk_size=128):
                     f.write(chunk)
