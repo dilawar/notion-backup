@@ -1,2 +1,4 @@
-def main() -> None:
-    print("Hello from notion-backup!")
+import notion_backup.__main__
+
+def main():
+    notion_backup.__main__
