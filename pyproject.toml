@@ -1,0 +1,21 @@
+[project]
+name = "notion-backup"
+version = "0.1.0"
+description = "prettify notion html exports"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "bs4>=0.0.2",
+    "idna>=3.10",
+    "requests>=2.32.5",
+    "soupsieve>=2.7",
+    "tqdm>=4.67.1",
+    "urllib3>=2.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyflakes>=3.4.0",
+    "ruff>=0.12.10",
+]
