@@ -3,6 +3,7 @@ import os
 import re
 import shutil
 import zipfile
+from loguru import logger
 from pathlib import Path
 
 import requests
@@ -31,7 +32,7 @@ assert css_injectionpath.is_file()
 
 htmlpaths = list(unzippath.rglob("*.html"))
 for htmlpath in htmlpaths:
-    print(f"processing: {htmlpath}")
+    logger.info(f"processing: {htmlpath}")
 
     content = htmlpath.read_text(encoding="utf-8")
     soup = BeautifulSoup(content, "html.parser")
@@ -68,11 +69,12 @@ for htmlpath in htmlpaths:
     external_imgs = [img for img in imgs if img.has_attr("src") and img["src"].startswith("http")]
     for img in external_imgs:
         url = img["src"]
+        logger.debug(f'Processing {url=}')
         if url in cached_img_links:
             continue
         cached_img_links.append(url)
         try:
-            response = requests.get(url, stream=True)
+            response = requests.get(url, timeout=5, stream=True)
             filename = Path(url).name
             # filename can be very long
             cache_img_path = cachepath / filename[:128]
@@ -80,9 +82,9 @@ for htmlpath in htmlpaths:
                 for chunk in response.iter_content(chunk_size=128):
                     f.write(chunk)
             img["src"] = os.path.relpath(cache_img_path, htmlpath.parent)
-        except requests.exceptions.ConnectionError:
-            pass
-    print(f"\t cached {len(external_imgs)} images")
+        except Exception as e:
+            logger.warning(f"Failed {e}")
+    logger.info(f"\t cached {len(external_imgs)} images")
 
     # cache katex
     equations = [elem for elem in elems if elem and elem.name == "figure" and "equation" in elem.get("class", [])]
@@ -104,7 +106,7 @@ for htmlpath in htmlpaths:
         link_elem["rel"] = "stylesheet"
         link_elem["href"] = os.path.relpath(katex_cache_path, htmlpath.parent)
         head.append(link_elem)
-    print(f"\t cached {len(equations)} equations")
+    logger.info(f"\t cached {len(equations)} equations")
 
     # format html, keep equations as they are
     equations = [elem for elem in soup.find_all("figure", class_="equation")]
